@@ -1,30 +1,61 @@
-import { Subject, Observable, Subscription, BehaviorSubject } from 'rxjs';
-import { filter, share, shareReplay, takeUntil, multicast, publish } from 'rxjs/operators';
+import { Subject, Observable, Subscription } from 'rxjs';
+import { filter, share, map } from 'rxjs/operators';
 
 export interface Message {
-  appId: string;
-  channelId: string;
-  message: string;
+  applicationId: string;
+  channel: string;
+  event: string;
+  detail: any;
 }
 
 export class MessageBusService {
 
   private messagesSubject: Subject<Message> = new Subject<Message>();
-  public messages$: Observable<Message> = this.messagesSubject.asObservable();
+  private messages$: Observable<Message> = this.messagesSubject.asObservable();
+
+  private subscriptions: Record<string, Subscription> = {};
 
   constructor() {
   }
 
-  publish(message: Message) {
-    const { appId, channelId, message: text } = message;
-    this.messagesSubject.next({ ...message, message: `[${ appId }/${ channelId }] ${ text }` });
+
+  public subscribe(applicationId: string, event: string, channel: string, callback: (e: any) => any): void {
+    const subscription = this.messages$.pipe(
+      filter(m => m.channel === channel && m.event === event), // m.applicationId === applicationId &&
+      map(m => m.detail),
+      share()
+    ).subscribe(callback);
+    this.subscriptions = {
+      ...this.subscriptions,
+      [MessageBusService.getSubscriptionId(applicationId, channel, event)]: subscription
+    };
   }
 
-  subscribe(appId: string, channelId: string): Observable<Message> {
-    return this.messages$.pipe(
-      filter(m => m.channelId === channelId),
-      share()
-    );
+
+  public unsubscribe(applicationId: string, event: string, channel: string, callback?: (e?: any) => any): void {
+    const subscriptionKey = Object.keys(this.subscriptions).find(s => s === MessageBusService.getSubscriptionId(applicationId, channel, event));
+    if(!subscriptionKey) {
+      return;
+    }
+    console.log(`Unsubscribing application "${ applicationId }" from "${ channel }" channel with event "${ event }"...`);
+    this.subscriptions[subscriptionKey].unsubscribe();
+    delete this.subscriptions[subscriptionKey];
+    if(callback) {
+      callback();
+    }
+  }
+
+
+  public publish(applicationId: string, event: string, channel: string, detail: any = {}) { // applicationId == e.spa
+    this.messagesSubject.next({ event, channel, detail, applicationId });
+  }
+
+  public removeChannel(channel: string): void {
+    // TODO
+  }
+
+  private static getSubscriptionId(applicationId: string, channel: string, event: string) {
+    return `${ applicationId }___${ channel }___${ event }`;
   }
 }
 

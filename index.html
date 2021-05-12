@@ -6,8 +6,18 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>RxJS Message Bus</title>
   <style>
-      body {
 
+      ol {
+          padding: 20px;
+          max-height: 30vh;
+          overflow: auto;
+      }
+
+      li {
+          padding: 15px;
+
+          margin-bottom: 10px;
+          margin-left: 20px;
       }
 
       .apps, .channels {
@@ -22,22 +32,22 @@
           flex-grow: 1;
       }
 
-      ol {
-          padding: 20px;
-          max-height: 30vh;
-          overflow: auto;
+      .app li {
+          background: lightcoral;
+
       }
 
-      li {
-          padding: 15px;
-          background: lightcoral;
-          margin-bottom: 10px;
-          margin-left: 20px;
+      .channel li {
+          background: cornflowerblue;
       }
+
 
       @media (max-width: 500px) {
           .apps, .channels {
               flex-direction: column;
+          }
+          ol {
+              max-height: 5vh;
           }
       }
   </style>
