@@ -1,5 +1,5 @@
 import { Subject, Observable } from 'rxjs';
-import { filter, share } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 
 export interface Message {
   appId: string;
@@ -17,14 +17,12 @@ export class MessageBusService {
 
   publish(message: Message) {
     this.messagesSubject.next(message);
-    // this.messagesSubject.next({ ...message, message: `[${ appId }/${ channelId }] ${ text }` });
+    // this.messagesSubject.next({ ...message, detail: `[${ appId }/${ channelId }] ${ text }` });
   }
 
   subscribe(appId: string, channelId: string): Observable<Message> {
     return this.messages$.pipe(
-      filter(m => m.channelId === channelId),
-      share()
+      filter(m => m.channelId === channelId)
     );
   }
 }
-
