@@ -1,0 +1,27 @@
+{
+  "name": "rxjs-message-bus",
+  "version": "1.0.0",
+  "description": "A simple message bus service written in rxjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack serve --mode development"
+  },
+  "keywords": [
+    "rxjs",
+    "message bus",
+    "typescript",
+    "webpack"
+  ],
+  "author": "Daniel Zotti",
+  "license": "MIT",
+  "dependencies": {
+    "rxjs": "^7.0.1"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.1.2",
+    "typescript": "^4.2.4",
+    "webpack": "^5.37.0",
+    "webpack-cli": "^4.7.0",
+    "webpack-dev-server": "^3.11.2"
+  }
+}
