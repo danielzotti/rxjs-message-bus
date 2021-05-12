@@ -10,7 +10,7 @@
 
       }
 
-      .channels {
+      .apps,.channels {
           display: flex;
           flex-direction: row;
           justify-content: center;
@@ -18,12 +18,12 @@
           align-content: stretch;
       }
 
-      .channel {
+      .app,.channel {
           flex-grow: 1;
       }
 
-      ul {
-          list-style-type: none;
+      ol {
+          /*list-style-type: none;*/
           padding: 20px;
       }
 
@@ -33,8 +33,8 @@
           margin-bottom: 10px;
       }
 
-      @media(max-width: 600px) {
-          .channels {
+      @media (max-width: 500px) {
+          .apps,.channels {
               flex-direction: column;
           }
       }
@@ -54,15 +54,25 @@
   <div class="channels">
     <div class="channel">
       <h3>Channel 1</h3>
-      <ul id="channel1"></ul>
+      <ol id="channel1"></ol>
     </div>
     <div class="channel">
       <h3>Channel 2</h3>
-      <ul id="channel2"></ul>
+      <ol id="channel2"></ol>
     </div>
-    <div class="channel">
-      <h3>Channel 3</h3>
-      <ul id="channel3"></ul>
+  </div>
+  <div class="apps">
+    <div class="app">
+      <h3>App 1</h3>
+      <ol id="app1"></ol>
+    </div>
+    <div class="app">
+      <h3>App 2</h3>
+      <ol id="app2"></ol>
+    </div>
+    <div class="app">
+      <h3>App 3</h3>
+      <ol id="app3"></ol>
     </div>
   </div>
 </div>

@@ -28,27 +28,53 @@ sendButtonClicked$.pipe(
   withLatestFrom(messageInputChanged$, channelInputChanged$),
   tap(([e, message, channel]) => {
     console.log({ channel, message });
-    messageService.publish({ id: channel, message: message });
+    messageService.publish({ appId: 'app1', channelId: channel, message });
   })
 ).subscribe();
 
 
-const ch1 = messageService.subscribe('channel1');
-const ch2 = messageService.subscribe('channel2');
-const ch2_delayed = messageService.subscribe('channel2');
+const ch1 = messageService.subscribe('app1', 'channel1');
+const ch2 = messageService.subscribe('app1', 'channel2');
+
+const app1 = messageService.subscribe('app1', 'channel1');
+const app2 = messageService.subscribe('app2', 'channel2');
+const app3 = messageService.subscribe('app3', 'channel2');
 
 ch1.pipe(tap(res => console.log({ channel1: res }))).subscribe(addMessageToChannel);
 ch2.pipe(tap(res => console.log({ channel2: res }))).subscribe(addMessageToChannel);
 
+app1.subscribe((res) => addMessageToApp({
+  appId: 'app1',
+  channelId: 'channel1',
+  message: res.message
+}));
+app2.subscribe((res) => addMessageToApp({
+  appId: 'app2',
+  channelId: 'channel2',
+  message: res.message
+}));
+
+
 setTimeout(() => {
-  console.log('Delayed channel2 subscribed');
-  ch2_delayed.pipe(tap(res => console.log({ channel2_delayed: res }))).subscribe((res) => addMessageToChannel({
-    id: 'channel3',
+  console.log('Delayed channel2 subscribed for app3');
+  app3.subscribe((res) => addMessageToApp({
+    appId: 'app3',
+    channelId: 'channel2',
     message: res.message
   }));
+  setTimeout(() => {
+    console.log('Delayed channel2 unsubscribed for app3');
+    messageService.unsubscribe('app3', 'channel2');
+  }, 10000);
+
 }, 10000);
 
-function addMessageToChannel({ id, message }: Message) {
-  const $channel = document.querySelector(`#${ id }`);
+function addMessageToChannel({ channelId, message }: Message) {
+  const $channel = document.querySelector(`#${ channelId }`);
   $channel.innerHTML = `${ $channel.innerHTML }<li>${ message }</li>`;
+}
+
+function addMessageToApp({ appId, message }: Message) {
+  const $app = document.querySelector(`#${ appId }`);
+  $app.innerHTML = `${ $app.innerHTML }<li>${ message }</li>`;
 }
