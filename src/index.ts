@@ -27,7 +27,7 @@ const sendButtonClicked$ = fromEvent($inputButtonSend, 'click');
 sendButtonClicked$.pipe(
   withLatestFrom(messageInputChanged$, channelInputChanged$),
   tap(([e, message, channel]) => {
-    console.log({ channel, message });
+    // console.log({ channel, message });
     messageService.publish({ appId: 'app1', channelId: channel, message });
   })
 ).subscribe();
@@ -38,10 +38,10 @@ const ch2 = messageService.subscribe('app1', 'channel2');
 
 const app1 = messageService.subscribe('app1', 'channel1');
 const app2 = messageService.subscribe('app2', 'channel2');
-const app3 = messageService.subscribe('app3', 'channel2');
+const app3 = messageService.subscribe('app3', 'channel1');
 
-ch1.pipe(tap(res => console.log({ channel1: res }))).subscribe(addMessageToChannel);
-ch2.pipe(tap(res => console.log({ channel2: res }))).subscribe(addMessageToChannel);
+ch1.subscribe(addMessageToChannel);
+ch2.subscribe(addMessageToChannel);
 
 app1.subscribe((res) => addMessageToApp({
   appId: 'app1',
@@ -53,28 +53,37 @@ app2.subscribe((res) => addMessageToApp({
   channelId: 'channel2',
   message: res.message
 }));
+app3.subscribe((res) => addMessageToApp({
+  appId: 'app3',
+  channelId: 'channel1',
+  message: res.message
+}));
 
 
 setTimeout(() => {
-  console.log('Delayed channel2 subscribed for app3');
-  app3.subscribe((res) => addMessageToApp({
+  console.log('Delayed subcription to channel2 for app3');
+  const app3Delayed = messageService.subscribe('app3', 'channel2');
+  const app3DelayedSubscription = app3Delayed.subscribe((res) => addMessageToApp({
     appId: 'app3',
     channelId: 'channel2',
     message: res.message
   }));
   setTimeout(() => {
-    console.log('Delayed channel2 unsubscribed for app3');
-    messageService.unsubscribe('app3', 'channel2');
+    console.log('Delayed unsubcription to channel2 for app3');
+    app3DelayedSubscription.unsubscribe();
   }, 10000);
 
-}, 10000);
+}, 7000);
 
 function addMessageToChannel({ channelId, message }: Message) {
   const $channel = document.querySelector(`#${ channelId }`);
   $channel.innerHTML = `${ $channel.innerHTML }<li>${ message }</li>`;
+  $channel.scrollTo(0, $channel.scrollHeight);
 }
 
 function addMessageToApp({ appId, message }: Message) {
+  // console.log('addMessageToApp', { appId, message });
   const $app = document.querySelector(`#${ appId }`);
   $app.innerHTML = `${ $app.innerHTML }<li>${ message }</li>`;
+  $app.scrollTo(0, $app.scrollHeight);
 }
