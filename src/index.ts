@@ -1,5 +1,5 @@
 import { fromEvent, Observable } from 'rxjs';
-import { filter, map, pluck, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { filter, pluck, startWith, tap, withLatestFrom } from 'rxjs/operators';
 import { Message, MessageBusService } from './message-bus-service';
 
 const messageService: MessageBusService = new MessageBusService();
@@ -27,30 +27,34 @@ sendButtonClicked$.pipe(
   })
 ).subscribe();
 
-
+// CHANNEL 1
 messageService.subscribe('app1', 'event1', 'channel1', (detail) => addMessageToChannel({
   channel: 'channel1',
   event: 'event1',
   detail
 }));
+// CHANNEL 2
 messageService.subscribe('app1', 'event1', 'channel2', (detail) => addMessageToChannel({
   channel: 'channel2',
   event: 'event1',
   detail
 }));
 
+// APP 1 - CHANNEL 1
 messageService.subscribe('app1', 'event1', 'channel1', (detail) => addMessageToApp({
   applicationId: 'app1',
   channel: 'channel1',
   event: 'event1',
   detail
 }));
+// APP 2 - CHANNEL 2
 messageService.subscribe('app2', 'event1', 'channel2', (detail) => addMessageToApp({
   applicationId: 'app2',
   channel: 'channel2',
   event: 'event1',
   detail
 }));
+// APP 3 - CHANNEL 1
 messageService.subscribe('app3', 'event1', 'channel1', (detail) => addMessageToApp({
   applicationId: 'app3',
   channel: 'channel1',
@@ -60,6 +64,7 @@ messageService.subscribe('app3', 'event1', 'channel1', (detail) => addMessageToA
 
 setTimeout(() => {
   console.log('Delayed subcription to channel2 for app3');
+  // APP 3 - CHANNEL 2
   messageService.subscribe('app3', 'event1', 'channel2', (detail) => addMessageToApp({
     applicationId: 'app3',
     channel: 'channel2',
