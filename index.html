@@ -4,10 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>RxJS Demo</title>
+  <title>RxJS Message Bus</title>
   <style>
       body {
-          background: lightgray
+
+      }
+
+      .channels {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: stretch;
+          align-content: stretch;
+      }
+
+      .channel {
+          flex-grow: 1;
       }
 
       ul {
@@ -20,12 +32,39 @@
           background: lightcoral;
           margin-bottom: 10px;
       }
+
+      @media(max-width: 600px) {
+          .channels {
+              flex-direction: column;
+          }
+      }
   </style>
 </head>
 <body>
-<h1>RxJS Demo</h1>
+<h1>RxJS Message Bus</h1>
 <div>
-  <ul id="list"></ul>
+  <form id="input__form" class="input">
+    <input id="input__message" name="message">
+    <select id="input__channel" name="channel">
+      <option selected value="channel1">Channel 1</option>
+      <option value="channel2">Channel 2</option>
+    </select>
+    <button id="input__send" type="button">Send</button>
+  </form>
+  <div class="channels">
+    <div class="channel">
+      <h3>Channel 1</h3>
+      <ul id="channel1"></ul>
+    </div>
+    <div class="channel">
+      <h3>Channel 2</h3>
+      <ul id="channel2"></ul>
+    </div>
+    <div class="channel">
+      <h3>Channel 3</h3>
+      <ul id="channel3"></ul>
+    </div>
+  </div>
 </div>
 <script src="/bundle.js"></script>
 </body>
