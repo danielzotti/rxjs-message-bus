@@ -1,10 +1,10 @@
-import { Subject, Observable, Subscription, BehaviorSubject } from 'rxjs';
-import { filter, share, shareReplay, takeUntil, multicast, publish } from 'rxjs/operators';
+import { Subject, Observable } from 'rxjs';
+import { filter, share } from 'rxjs/operators';
 
 export interface Message {
   appId: string;
   channelId: string;
-  message: string;
+  detail: string;
 }
 
 export class MessageBusService {
@@ -16,8 +16,8 @@ export class MessageBusService {
   }
 
   publish(message: Message) {
-    const { appId, channelId, message: text } = message;
-    this.messagesSubject.next({ ...message, message: `[${ appId }/${ channelId }] ${ text }` });
+    this.messagesSubject.next(message);
+    // this.messagesSubject.next({ ...message, message: `[${ appId }/${ channelId }] ${ text }` });
   }
 
   subscribe(appId: string, channelId: string): Observable<Message> {
